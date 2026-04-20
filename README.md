@@ -1,5 +1,5 @@
 # Smart Technology Begroting
-.
+
 Webapplicatie voor het beheren van een productcatalogus, leveranciers, categorieen en een begrotingscalculator voor een Smart Technology lessenserie.
 
 ## Functies
