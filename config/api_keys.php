@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'default-import' => 'replace-with-secure-key-1',
-    'external-sync' => 'replace-with-secure-key-2',
+    'default-import' => '1321kj23fho3fho1',
+    'external-sync' => 'awefalkjefhwhi',
 ];
