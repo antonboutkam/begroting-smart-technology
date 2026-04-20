@@ -1,0 +1,78 @@
+{% extends 'Shared/views/layout.twig' %}
+
+{% block content %}
+    <section class="page-header">
+        <div>
+            <h2>{{ is_new ? 'Nieuw product' : product.name }}</h2>
+            <p class="muted">
+                {% if is_new %}
+                    Vul de productbasis in. Afbeeldingen kun je toevoegen zodra het product is opgeslagen.
+                {% else %}
+                    Beheer productdetails en afbeeldingen.
+                {% endif %}
+            </p>
+        </div>
+        <div class="header-actions">
+            <a class="button-link button-link-muted" href="{{ overview_url }}" {% if popup_mode %}onclick="window.close(); return false;"{% endif %}>
+                {{ popup_mode ? 'Venster sluiten' : 'Terug naar overzicht' }}
+            </a>
+        </div>
+    </section>
+
+    <div class="two-column">
+        <section class="panel">
+            <h3>Productgegevens</h3>
+            <form method="post" enctype="multipart/form-data" class="form-grid">
+                <label><span>Naam</span><input type="text" name="name" value="{{ product.name }}" required></label>
+                <label><span>Categorie</span>
+                    <select name="category_id">
+                        <option value="">Geen categorie</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if product.category_id == category.id %}selected{% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label><span>Merk</span><input type="text" name="brand" value="{{ product.brand }}"></label>
+                <label><span>Prioriteit</span><input type="number" min="0" max="10" name="priority" value="{{ product.priority }}"></label>
+                <label><span>Eenheid</span><input type="text" name="unit" value="{{ product.unit }}"></label>
+                <label><span>Benodigd per student</span><input type="number" step="0.0001" min="0" name="quantity_per_student" value="{{ product.quantity_per_student }}"></label>
+                <label class="checkbox"><input type="checkbox" name="is_asset" value="1" {% if product.is_asset %}checked{% endif %}> Duurzaam bedrijfsmiddel</label>
+                <label class="full"><span>Doel</span><textarea name="goal" rows="3">{{ product.goal }}</textarea></label>
+                <label class="full"><span>Beschrijving</span><textarea name="description" rows="4">{{ product.description }}</textarea></label>
+                {% if not is_new %}
+                    <label class="full"><span>Afbeeldingen toevoegen</span><input type="file" name="images[]" multiple></label>
+                {% endif %}
+                <button type="submit">{{ is_new ? 'Product aanmaken' : 'Opslaan' }}</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h3>Afbeeldingen</h3>
+            {% if is_new %}
+                <p class="muted">Sla eerst het product op om afbeeldingen toe te voegen.</p>
+            {% else %}
+                <div class="image-grid">
+                    {% for image in images %}
+                        <figure class="image-card">
+                            <img src="{{ image.file_path }}" alt="{{ image.original_name }}">
+                            <figcaption>{{ image.original_name }}</figcaption>
+                        </figure>
+                    {% else %}
+                        <p>Nog geen afbeeldingen geupload.</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+    </div>
+
+    {% if popup_mode and just_saved %}
+        <script>
+            if (window.opener && !window.opener.closed) {
+                try {
+                    window.opener.location.reload();
+                } catch (error) {
+                }
+            }
+        </script>
+    {% endif %}
+{% endblock %}

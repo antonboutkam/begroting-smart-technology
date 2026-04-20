@@ -1,0 +1,35 @@
+{% extends 'Shared/views/layout.twig' %}
+
+{% block content %}
+    <section class="page-header">
+        <div>
+            <h2>Dashboard</h2>
+            <p class="muted">Overzicht van de opbouw van de Smart Technology begroting.</p>
+        </div>
+    </section>
+
+    <section class="stats-grid">
+        <article class="stat-card">
+            <h3>{{ stats.products }}</h3>
+            <p>Producten</p>
+        </article>
+        <article class="stat-card">
+            <h3>{{ stats.suppliers }}</h3>
+            <p>Leveranciers</p>
+        </article>
+        <article class="stat-card">
+            <h3>{{ stats.categories }}</h3>
+            <p>Categorieen</p>
+        </article>
+    </section>
+
+    <section class="panel">
+        <h3>Werkwijze</h3>
+        <ol class="plain-list">
+            <li>Voeg eerst categorieen toe zodat de boomstructuur klopt.</li>
+            <li>Maak daarna producten aan en koppel deze aan een categorie.</li>
+            <li>Voeg leveranciers toe en leg per product de prijs en verpakking vast.</li>
+            <li>Gebruik de calculator om voor 50 of meer studenten een begroting op te bouwen.</li>
+        </ol>
+    </section>
+{% endblock %}

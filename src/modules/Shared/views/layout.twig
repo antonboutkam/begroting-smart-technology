@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_title|default('Smart Technology Begroting') }}</title>
+    <link rel="stylesheet" href="/assets/css/app.css">
+</head>
+<body>
+    <div class="app-shell">
+        {% if current_user and not popup_mode|default(false) %}
+            <header class="topbar">
+                <div class="topbar-brand">
+                    <h1>SmartTech</h1>
+                    <p class="muted">Begrotingssysteem</p>
+                </div>
+                <nav class="topbar-nav">
+                    <a href="/dashboard" class="{{ current_path == '/dashboard' or current_path == '/' ? 'active' : '' }}">Dashboard</a>
+                    <a href="/products" class="{{ current_path starts with '/products' ? 'active' : '' }}">Producten</a>
+                    <a href="/suppliers" class="{{ current_path starts with '/suppliers' ? 'active' : '' }}">Leveranciers</a>
+                    <a href="/categories" class="{{ current_path starts with '/categories' ? 'active' : '' }}">Categorieen</a>
+                    <a href="/calculator" class="{{ current_path starts with '/calculator' ? 'active' : '' }}">Calculator</a>
+                    <a href="/api/docs" class="{{ current_path starts with '/api/docs' ? 'active' : '' }}">API docs</a>
+                </nav>
+                <div class="topbar-user">
+                    <span>{{ current_user.display_name }}</span>
+                    <a href="/logout">Uitloggen</a>
+                </div>
+            </header>
+        {% endif %}
+        <main class="content {{ current_user ? '' : 'content-login' }} {{ popup_mode|default(false) ? 'content-popup' : '' }}">
+            {% for flash in flashes %}
+                <div class="flash flash-{{ flash.type }}">{{ flash.message }}</div>
+            {% endfor %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

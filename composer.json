@@ -1,0 +1,17 @@
+{
+    "name": "roc/smarttech-begroting",
+    "description": "Begrotingssysteem voor Smart Technology lessenserie.",
+    "type": "project",
+    "require": {
+        "php": "^8.3",
+        "symfony/console": "^7.2",
+        "symfony/routing": "^7.2",
+        "twig/twig": "^3.10"
+    },
+    "autoload": {
+        "psr-4": {
+            "Roc\\SmartTech\\Begroting\\Classes\\": "src/classes/",
+            "Roc\\SmartTech\\Begroting\\Modules\\": "src/modules/"
+        }
+    }
+}

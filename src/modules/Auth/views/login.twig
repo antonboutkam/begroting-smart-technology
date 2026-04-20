@@ -1,0 +1,19 @@
+{% extends 'Shared/views/layout.twig' %}
+
+{% block content %}
+    <section class="panel panel-narrow">
+        <h2>Inloggen</h2>
+        <p class="muted">Log in om de productcatalogus, leveranciers en calculator te beheren.</p>
+        <form method="post" class="form-grid">
+            <label>
+                <span>Gebruikersnaam of e-mail</span>
+                <input type="text" name="login" required>
+            </label>
+            <label>
+                <span>Wachtwoord</span>
+                <input type="password" name="password" required>
+            </label>
+            <button type="submit">Inloggen</button>
+        </form>
+    </section>
+{% endblock %}

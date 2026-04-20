@@ -1,0 +1,34 @@
+{% extends 'Shared/views/layout.twig' %}
+
+{% block content %}
+    <section class="page-header">
+        <div>
+            <h2>API documentatie</h2>
+            <p class="muted">Elke dataset heeft een eigen endpoint. Authenticatie verloopt via `?api_key=` als GET-parameter.</p>
+        </div>
+    </section>
+
+    <section class="panel">
+        <p>Geconfigureerde sleutels staan in <code>config/api_keys.php</code>. Labels: {{ api_keys|join(', ') }}.</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Endpoint</th>
+                    <th>Methodes</th>
+                    <th>Omschrijving</th>
+                    <th>Voorbeeld body</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for endpoint in endpoints %}
+                    <tr>
+                        <td><code>{{ endpoint.path }}</code></td>
+                        <td>{{ endpoint.methods }}</td>
+                        <td>{{ endpoint.description }}</td>
+                        <td><code>{{ endpoint.sample }}</code></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+{% endblock %}

@@ -1,0 +1,79 @@
+{% extends 'Shared/views/layout.twig' %}
+
+{% block content %}
+    <section class="page-header">
+        <div>
+            <h2>{{ supplier.name }}</h2>
+            <p class="muted">Beheer leveranciersgegevens, bestanden en productprijzen.</p>
+        </div>
+    </section>
+
+    <div class="two-column">
+        <section class="panel">
+            <h3>Leveranciersgegevens</h3>
+            <form method="post" enctype="multipart/form-data" class="form-grid">
+                <input type="hidden" name="form_action" value="supplier">
+                <label><span>Naam</span><input type="text" name="name" value="{{ supplier.name }}" required></label>
+                <label><span>BTW tarief</span><input type="number" step="0.01" name="vat_rate" value="{{ supplier.vat_rate }}"></label>
+                <label><span>Verzendkosten excl.</span><input type="number" step="0.01" name="shipping_excl" value="{{ supplier.shipping_excl }}"></label>
+                <label><span>Verzendkosten incl.</span><input type="number" step="0.01" name="shipping_incl" value="{{ supplier.shipping_incl }}"></label>
+                <label class="full"><span>Omschrijving</span><textarea name="description" rows="4">{{ supplier.description }}</textarea></label>
+                <label class="full"><span>Document met leveranciersgegevens</span><input type="file" name="supplier_document"></label>
+                <label class="full"><span>Productcatalogussen</span><input type="file" name="catalogues[]" multiple></label>
+                <button type="submit">Opslaan</button>
+            </form>
+
+            <h4>Bestanden</h4>
+            <ul class="plain-list">
+                {% for file in supplier_files %}
+                    <li><a href="{{ file.file_path }}" target="_blank">{{ file.original_name }}</a> <span class="muted">({{ file.file_type }})</span></li>
+                {% else %}
+                    <li>Nog geen bestanden geupload.</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <section class="panel">
+            <h3>Productkoppeling</h3>
+            <form method="post" class="form-grid">
+                <input type="hidden" name="form_action" value="product_link">
+                <label><span>Product</span>
+                    <select name="product_id" required>
+                        <option value="">Kies een product</option>
+                        {% for product in products %}
+                            <option value="{{ product.id }}">{{ product.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label><span>Prijs excl.</span><input type="number" step="0.01" name="price_excl"></label>
+                <label><span>Prijs incl.</span><input type="number" step="0.01" name="price_incl"></label>
+                <label class="full"><span>Verpakkingsinformatie</span><textarea name="package_information" rows="3"></textarea></label>
+                <button type="submit">Koppeling opslaan</button>
+            </form>
+
+            <h4>Huidige koppelingen</h4>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Excl.</th>
+                        <th>Incl.</th>
+                        <th>Verpakking</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for link in product_links %}
+                        <tr>
+                            <td>{{ link.product_name }}</td>
+                            <td>{{ link.price_excl ?: '-' }}</td>
+                            <td>{{ link.price_incl ?: '-' }}</td>
+                            <td>{{ link.package_information ?: '-' }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="4">Nog geen gekoppelde producten.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </section>
+    </div>
+{% endblock %}

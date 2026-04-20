@@ -1,0 +1,35 @@
+{% extends 'Shared/views/layout.twig' %}
+
+{% block content %}
+    <section class="page-header">
+        <div>
+            <h2>Categoriebeheer</h2>
+            <p class="muted">Onderhoud de productstructuur als boom.</p>
+        </div>
+    </section>
+
+    <div class="two-column">
+        <section class="panel">
+            <h3>Nieuwe categorie</h3>
+            <form method="post" class="form-grid">
+                <label><span>Naam</span><input type="text" name="name" required></label>
+                <label><span>Bovenliggende categorie</span>
+                    <select name="parent_id">
+                        <option value="">Root</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label><span>Sorteervolgorde</span><input type="number" name="sort_order" value="0"></label>
+                <button type="submit">Categorie opslaan</button>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h3>Boomstructuur</h3>
+            {% import 'Shared/views/category_display.twig' as tree %}
+            {{ tree.render(category_tree) }}
+        </section>
+    </div>
+{% endblock %}

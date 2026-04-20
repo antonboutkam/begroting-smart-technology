@@ -1,0 +1,132 @@
+{% extends 'Shared/views/layout.twig' %}
+
+{% block content %}
+    <section class="page-header">
+        <div>
+            <h2>Productcatalogus</h2>
+            <p class="muted">Doorzoek de catalogus en open nieuw of bestaand product in een apart venster.</p>
+        </div>
+        <div class="header-actions">
+            <a class="button-link" href="/products/new?popup=1" data-popup-link>Nieuw product</a>
+        </div>
+    </section>
+
+    <section class="panel filter-panel">
+        <form method="get" class="filter-form">
+            <div class="filter-row">
+                <label class="filter-search">
+                    <span>Zoeken</span>
+                    <input type="search" name="q" value="{{ search_query }}" placeholder="Naam, merk, doel of beschrijving">
+                </label>
+                <div class="filter-actions">
+                    <button type="submit">Filter toepassen</button>
+                    <a class="button-link button-link-muted" href="/products">Reset</a>
+                </div>
+            </div>
+
+            <div class="filter-groups">
+                <div class="filter-group">
+                    <span class="filter-label">Hoofdcategorie</span>
+                    <div class="checkbox-button-group">
+                        {% for category in top_categories %}
+                            <label class="checkbox-button">
+                                <input type="checkbox" name="categories[]" value="{{ category.id }}" {% if category.id in selected_category_ids %}checked{% endif %}>
+                                <span>{{ category.name }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label">Type</span>
+                    <div class="checkbox-button-group compact">
+                        <label class="checkbox-button">
+                            <input type="checkbox" name="asset_modes[]" value="asset" {% if 'asset' in selected_asset_modes %}checked{% endif %}>
+                            <span>Bedrijfsmiddel</span>
+                        </label>
+                        <label class="checkbox-button">
+                            <input type="checkbox" name="asset_modes[]" value="consumable" {% if 'consumable' in selected_asset_modes %}checked{% endif %}>
+                            <span>Verbruik</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label">Prioriteit</span>
+                    <div class="checkbox-button-group compact">
+                        <label class="checkbox-button">
+                            <input type="checkbox" name="priority_ranges[]" value="high" {% if 'high' in selected_priority_ranges %}checked{% endif %}>
+                            <span>8-10 hoog</span>
+                        </label>
+                        <label class="checkbox-button">
+                            <input type="checkbox" name="priority_ranges[]" value="medium" {% if 'medium' in selected_priority_ranges %}checked{% endif %}>
+                            <span>4-7 midden</span>
+                        </label>
+                        <label class="checkbox-button">
+                            <input type="checkbox" name="priority_ranges[]" value="low" {% if 'low' in selected_priority_ranges %}checked{% endif %}>
+                            <span>0-3 laag</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <section class="panel">
+        <div class="section-header">
+            <h3>Producten</h3>
+            <p class="muted">{{ products|length }} resultaat{{ products|length == 1 ? '' : 'en' }}</p>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Categorie</th>
+                        <th>Merk</th>
+                        <th>Prioriteit</th>
+                        <th>Type</th>
+                        <th>Per student</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for product in products %}
+                        <tr>
+                            <td><a href="/products/{{ product.id }}?popup=1" data-popup-link>{{ product.name }}</a></td>
+                            <td>
+                                {% if product.parent_category_name %}
+                                    {{ product.parent_category_name }} / {{ product.category_name }}
+                                {% else %}
+                                    {{ product.category_name ?: '-' }}
+                                {% endif %}
+                            </td>
+                            <td>{{ product.brand ?: '-' }}</td>
+                            <td>{{ product.priority }}</td>
+                            <td>{{ product.is_asset ? 'Bedrijfsmiddel' : 'Verbruik' }}</td>
+                            <td>{{ product.quantity_per_student }} {{ product.unit ?: '' }}</td>
+                            <td class="table-actions">
+                                <a href="/products/{{ product.id }}?popup=1" data-popup-link>Bewerken</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="7">Geen producten gevonden voor deze filters.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <script>
+        document.querySelectorAll('[data-popup-link]').forEach(function (link) {
+            link.addEventListener('click', function (event) {
+                if (event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0) {
+                    return;
+                }
+
+                event.preventDefault();
+                window.open(link.href, 'product-editor', 'popup=yes,width=1180,height=900,resizable=yes,scrollbars=yes');
+            });
+        });
+    </script>
+{% endblock %}

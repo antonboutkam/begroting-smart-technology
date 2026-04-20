@@ -1,0 +1,128 @@
+{% extends 'Shared/views/layout.twig' %}
+
+{% block content %}
+    <section class="page-header">
+        <div>
+            <h2>Calculator</h2>
+            <p class="muted">Filter op prioriteit, leveranciers en categorieen. Aanpassingen worden direct doorgerekend.</p>
+        </div>
+    </section>
+
+    <div class="two-column wide-left">
+        <section class="panel">
+            <h3>Filters</h3>
+            <form method="get" class="form-grid" id="calculator-form">
+                <label><span>Aantal studenten</span><input type="number" min="1" name="students" value="{{ filters.students }}"></label>
+                <label><span>Minimale prioriteit</span><input type="number" min="0" max="10" name="priority" value="{{ filters.priority }}"></label>
+                <label><span>Weergave</span>
+                    <select name="price_mode">
+                        <option value="incl" {% if filters.price_mode == 'incl' %}selected{% endif %}>Inclusief btw</option>
+                        <option value="excl" {% if filters.price_mode == 'excl' %}selected{% endif %}>Exclusief btw</option>
+                    </select>
+                </label>
+
+                <div class="full">
+                    <span>Leveranciers</span>
+                    <div class="checkbox-grid">
+                        {% for supplier in suppliers %}
+                            <label class="checkbox">
+                                <input type="checkbox" name="suppliers[]" value="{{ supplier.id }}" {% if supplier.id in selected_supplier_ids %}checked{% endif %}>
+                                {{ supplier.name }}
+                            </label>
+                        {% else %}
+                            <p>Geen leveranciers beschikbaar.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="full">
+                    <span>Categorieen</span>
+                    {% import 'Shared/views/category_tree.twig' as tree %}
+                    {{ tree.render(category_tree, selected_category_ids) }}
+                </div>
+            </form>
+        </section>
+
+        <section class="panel">
+            <h3>Begroting</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Artikel</th>
+                        <th>Categorie</th>
+                        <th>Aantal</th>
+                        <th>Leverancier</th>
+                        <th>Stukprijs</th>
+                        <th>Totaal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in result.rows %}
+                        <tr>
+                            <td>{{ row.product_name }}</td>
+                            <td>{{ row.category_name ?: '-' }}</td>
+                            <td>{{ row.quantity }} {{ row.unit ?: '' }}</td>
+                            <td>{{ row.supplier_name }}</td>
+                            <td>
+                                {% if filters.price_mode == 'incl' %}
+                                    {{ row.unit_price_incl|number_format(2, ',', '.') }}
+                                {% else %}
+                                    {{ row.unit_price_excl|number_format(2, ',', '.') }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if filters.price_mode == 'incl' %}
+                                    {{ row.row_price_incl|number_format(2, ',', '.') }}
+                                {% else %}
+                                    {{ row.row_price_excl|number_format(2, ',', '.') }}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="6">Geen producten matchen de huidige filters.</td></tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="5">Subtotaal artikelen</th>
+                        <th>{{ result.subtotal|number_format(2, ',', '.') }}</th>
+                    </tr>
+                    <tr>
+                        <th colspan="5">Verzendkosten</th>
+                        <th>
+                            {% if filters.price_mode == 'incl' %}
+                                {{ result.shipping_incl|number_format(2, ',', '.') }}
+                            {% else %}
+                                {{ result.shipping_excl|number_format(2, ',', '.') }}
+                            {% endif %}
+                        </th>
+                    </tr>
+                    {% if filters.price_mode == 'excl' %}
+                        <tr>
+                            <th colspan="5">BTW</th>
+                            <th>{{ result.vat_total|number_format(2, ',', '.') }}</th>
+                        </tr>
+                    {% endif %}
+                    <tr>
+                        <th colspan="5">Totaal</th>
+                        <th>
+                            {% if filters.price_mode == 'incl' %}
+                                {{ result.grand_total_incl|number_format(2, ',', '.') }}
+                            {% else %}
+                                {{ result.grand_total_excl|number_format(2, ',', '.') }}
+                            {% endif %}
+                        </th>
+                    </tr>
+                </tfoot>
+            </table>
+        </section>
+    </div>
+
+    <script>
+        document.querySelectorAll('#calculator-form input, #calculator-form select').forEach(function (element) {
+            element.addEventListener('change', function () {
+                document.getElementById('calculator-form').submit();
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'Shared/views/layout.twig' %}
+
+{% block content %}
+    <section class="panel">
+        <h2>Fout {{ status }}</h2>
+        <p>{{ message }}</p>
+        {% if not current_user %}
+            <p><a href="/login">Naar login</a></p>
+        {% endif %}
+    </section>
+{% endblock %}
